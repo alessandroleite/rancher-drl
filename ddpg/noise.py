@@ -1,4 +1,5 @@
 import random
+import copy
 import numpy as np
 
 class Ornstein:

@@ -9,38 +9,40 @@ import torch
 import torch.nn.functional as F
 import torch.optim as optim
 
-# BUFFER_SIZE = int(1e6)  # replay buffer size
-# BATCH_SIZE = 200        # minibatch size
-# GAMMA = 0.99            # discount factor
-# TAU = 1e-3              # for soft update of target parameters
-# LR_ACTOR = 1e-4         # learning rate of the actor 
-# LR_CRITIC = 1e-3        # learning rate of the critic
-# WEIGHT_DECAY = 0        # L2 weight decay
-# UPDATE_EVERY = 20
-# UPDATE_NET_TIMES = 10
-
-from ddpg1.buffer import ReplayBuffer
-from ddpg1.model import Critic, Actor
-from ddpg1.noise import Ornstein
+from ddpg.buffer import ReplayBuffer
+from ddpg.model import Critic, Actor
+from ddpg.noise import Ornstein
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 class DDPGAgent:
     """Interacts with and learns from the environment."""
     
-    def __init__(self, state_size, action_size, n_agents, seed, buffer_size=int(1e6), batch_size=200, lr_actor=1e-4, lr_critic=1e-3, gamma=0.99, weight_decay, update_frequency=20, n_learns=10):
+    def __init__(self, state_size, action_size, n_agents, seed, buffer_size=int(1e6), batch_size=200, lr_actor=1e-4, lr_critic=1e-3, gamma=0.99, weight_decay=0, tau=1e-3, update_frequency=20, n_learns=10):
         """Initialize a DDPG agent object.
         
         Params
         ======
             state_size (int): dimension of each state
             action_size (int): dimension of each action
+            n_agents (int): number of agents
             random_seed (int): random seed
+            batch_size (int): minibatch size
+            lr_actor (float): learning rate of the actor 
+            lr_critic (float): learning rate of the critic
+            gamma (float):  discount factor
+            weight_decay (float): critic L2 weight decay
+            tau (float): value for soft update of target parameters
+            update_frequency (int): how much steps must be executed before starting learning
+            n_learns (int): how many learning for update 
+            
         """
         self.state_size = state_size
         self.action_size = action_size
         self.n_agents = n_agents
         self.gamma = gamma
+        self.batch_size = batch_size
+        self.tau = tau
         self.seed = random.seed(seed)
         self.update_frequency = update_frequency
         self.n_learns = n_learns
@@ -59,7 +61,7 @@ class DDPGAgent:
         self.noise = Ornstein((n_agents, action_size), seed)
 
         # Replay memory
-        self.memory = ReplayBuffer(action_size, buffer_size, seed)
+        self.memory = ReplayBuffer(action_size, buffer_size, seed, device)
 
         # Initialize the time step (for every update_frequency steps)
         self.t_step = 0
@@ -130,8 +132,8 @@ class DDPGAgent:
         self.actor_optimizer.step()
 
         # ----------------------- update target networks ----------------------- #
-        self.soft_update(self.critic_local, self.critic_target, TAU)
-        self.soft_update(self.actor_local, self.actor_target, TAU)                     
+        self.soft_update(self.critic_local, self.critic_target, self.tau)
+        self.soft_update(self.actor_local, self.actor_target, self.tau)                     
 
     def soft_update(self, local_model, target_model, tau):
         """Soft update model parameters.

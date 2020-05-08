@@ -39,7 +39,7 @@ Over the last years, RL has achieved some breakthroughs by integrating deep lear
 
 \section{Goal}
 
-This project aims to train multiple agents in the Reacher environment. In this environnment, a double-jointed arm can move to target locations. A reward of \(+0.1\) is provided for each step that the agent's hand is in the goal location. Thus, the goal of the agent is to maintain its position at the target location for as many time steps as possible.
+This project aims to train multiple agents in the Reacher environment. In this environment, a double-jointed arm can move to target locations. A reward of \(+0.1\) is provided for each step that the agent's hand is in the goal location. Thus, the goal of the agent is to maintain its position at the target location for as many time steps as possible.
 
 The observation space consists of 33 variables corresponding to position, rotation, velocity, and angular velocities of the arm, and each action is a vector with four numbers, corresponding to torque applicable to two joints. Every entry in the action vector is a number between \(-1\) and \(1\). 
 
@@ -47,7 +47,7 @@ The environment is considered solved when the agents obtain an average score of 
 
 \section{Method}
 
-The proposed solution relies on Deep Deterministic Policy Gradient~(DDPG) algorithm proposed by~\citeauthor{lillicrap:16}~\cite{lillicrap:16}. DDPG is an off-policy actor-critic algorithm that uses deep function approximatiors to learn policies in high-dimensional continuous action spaces. It is based on the deterministic policy gradient algorithm~(DGP) algorithm~\citeauthor{silver:14}. DPG algorithm maintains an actor function \(\mu(s|\theta^\mu)\) to specify an policy that maps states to a specific action. Similar to Q-learning, the critic \(Q(s,a)\) function relies on Bellman equation and the actor is updated by applying the chain rule to the expected return from the start distribution \(J\) with respect to the actor parameters~\cite{lillicrap:16}:
+The proposed solution relies on Deep Deterministic Policy Gradient~(DDPG) algorithm proposed by~\citeauthor{lillicrap:16}~\cite{lillicrap:16}. DDPG is an off-policy actor-critic algorithm that uses deep function approximators to learn policies in high-dimensional continuous action spaces. It is based on the deterministic policy gradient algorithm~(DGP) algorithm~\citeauthor{silver:14}. DPG algorithm maintains an actor function \(\mu(s|\theta^\mu)\) to specify an policy that maps states to a specific action. Similar to Q-learning, the critic \(Q(s,a)\) function relies on Bellman equation and the actor is updated by applying the chain rule to the expected return from the start distribution \(J\) with respect to the actor parameters~\cite{lillicrap:16}:
 
 \begin{equation*}
    \begin{aligned}
@@ -55,7 +55,7 @@ The proposed solution relies on Deep Deterministic Policy Gradient~(DDPG) algori
    \end{aligned}
 \end{equation*}
 
-Exploration is one major challenge of learning in continuous action spaces. Therefore, off-policy algorithms such as DDPG can handle the exploration problem independent from the learning algorithm. The DDPG algorithm employs an exploration policy \(\mu^\prime\) by adding noise sampled from an Ornstein-Uhlenbeck process \(\mathcal{N}\) to the actor policy. 
+Exploration is one major challenge of learning in continuous action spaces. Therefore, off-policy algorithms such as DDPG can handle the exploration problem independent from the learning algorithm. The DDPG algorithm employs an exploration policy \(\mu^\prime\) by adding noise sampled from an Ornstein-Uhlenbeck process~\(\mathcal{N}\) to the actor policy. 
 
 \begin{equation*}
 \mu^{\prime}\left(s_{t}\right)=\mu\left(s_{t} | \theta_{t}^{\mu}\right)+\mathcal{N}
@@ -83,16 +83,6 @@ For this kind of environment, the algorithms that employ a distributed approach 
   \end{tabular}
 }
 \end{table}
-
-% BUFFER_SIZE = int(1e6)  # replay buffer size
-% BATCH_SIZE = 200        # minibatch size
-% GAMMA = 0.99            # discount factor
-% TAU = 1e-3              # for soft update of target parameters
-% LR_ACTOR = 1e-4         # learning rate of the actor 
-% LR_CRITIC = 1e-3        # learning rate of the critic
-% WEIGHT_DECAY = 0        # L2 weight decay
-% UPDATE_EVERY = 20
-% UPDATE_NET_TIMES = 10
 
 \begin{figure*}%[t!]
     \centering
